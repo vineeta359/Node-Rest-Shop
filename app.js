@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const productRoutes = require("./api/routes/products");
 const ordersRoutes = require("./api/routes/orders");
 
-//connecting mongoose
+//connecting with database
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true });
 mongoose.Promise=global.Promise;
 
