@@ -2,7 +2,8 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-
+//importing middleware
+const check_auth = require("../middleware/check_auth");
 //for uploading files ,use multer,
 const multer = require("multer");
 //storage configuration
@@ -61,42 +62,47 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", upload.single("productImage"), (req, res, next) => {
-  console.log(req.file);
-  //upload.single() middleware allows to upload single file
-  //creating a new mongoose object using mongoose model
-  const product = new Product({
-    _id: new mongoose.Types.ObjectId(), //for unique id of each object
-    name: req.body.name,
-    price: req.body.price,
-    productImage: req.file.path,
-  });
-
-  //saving the data object
-  product
-    .save()
-    .then((result) => {
-      console.log(result);
-      res.status(201).json({
-        message: "Created product successfully",
-        createdProduct: {
-          name: result.name,
-          price: result.price,
-          _id: result._id,
-          requests: {
-            type: "POST",
-            url: "http://localhost:3000/products/" + result._id,
-          },
-        },
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
+router.post(
+  "/",
+  check_auth,
+  upload.single("productImage"),
+  (req, res, next) => {
+    console.log(req.file);
+    //upload.single() middleware allows to upload single file
+    //creating a new mongoose object using mongoose model
+    const product = new Product({
+      _id: new mongoose.Types.ObjectId(), //for unique id of each object
+      name: req.body.name,
+      price: req.body.price,
+      productImage: req.file.path,
     });
-});
 
-router.get("/:productId", (req, res, next) => {
+    //saving the data object
+    product
+      .save()
+      .then((result) => {
+        console.log(result);
+        res.status(201).json({
+          message: "Created product successfully",
+          createdProduct: {
+            name: result.name,
+            price: result.price,
+            _id: result._id,
+            requests: {
+              type: "POST",
+              url: "http://localhost:3000/products/" + result._id,
+            },
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({ error: err });
+      });
+  }
+);
+
+router.get("/:productId", check_auth, (req, res, next) => {
   const id = req.params.productId;
 
   //finding the product by id
@@ -125,7 +131,7 @@ router.get("/:productId", (req, res, next) => {
     });
 });
 
-router.patch("/:productId", (req, res, next) => {
+router.patch("/:productId", check_auth, (req, res, next) => {
   const id = req.params.productId;
   //for updating only those field that are present in the body
   const updateOps = {};
@@ -149,7 +155,7 @@ router.patch("/:productId", (req, res, next) => {
     });
 });
 
-router.delete("/:productId", (req, res, next) => {
+router.delete("/:productId", check_auth, (req, res, next) => {
   const id = req.params.productId;
   //to remove a product using its id
   Product.remove({ _id: id })
