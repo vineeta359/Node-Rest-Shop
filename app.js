@@ -11,9 +11,10 @@ const ordersRoutes = require("./api/routes/orders");
 
 //connecting with database
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true });
-mongoose.Promise=global.Promise;
+mongoose.Promise = global.Promise;
 
 app.use(morgan("dev"));
+app.use("/uploads", express.static("uploads")); //to publicly access static folder uploads
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
