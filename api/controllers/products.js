@@ -100,29 +100,7 @@ exports.products_get_product = (req, res, next) => {
     });
 };
 
-exports.product_patch_product = (req, res, next) => {
-  const id = req.params.productId;
-  //for updating only those field that are present in the body
-  const updateOps = {};
-  for (const ops of req.body) {
-    updateOps[ops.propName] = ops.value;
-  }
-  Product.update({ _id: id }, { $set: updateOps })
-    .exec()
-    .then((result) => {
-      res.status(200).json({
-        message: "Product updated",
-        request: {
-          type: "PATCH",
-          url: "http://localhost:3000/products/" + id,
-        },
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
-};
+//make product update here
 
 exports.product_delete_product = (req, res, next) => {
   const id = req.params.productId;
