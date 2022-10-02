@@ -2,37 +2,7 @@ const mongoose = require("mongoose");
 const Product = require("../models/product");
 exports.products_get_all = (req, res, next) => {
   //to find all documents from the product object
-  Product.find()
-    .select("name price productImage _id") //select will send only selected fields from the object in response
-    .exec()
-    .then((docs) => {
-      //sending our own response with some extra precise data
-      const response = {
-        count: docs.length,
-        products: docs.map((doc) => {
-          return {
-            name: doc.name,
-            price: doc.price,
-            productImage: doc.productImage,
-            _id: doc._id,
-            requests: {
-              type: "GET",
-              url: "http://localhost:3000/products/" + doc._id,
-            },
-          };
-        }),
-      };
-      //if docs are present then sent the docs else show corresponding message
-      if (docs.length >= 1) res.status(200).json(response);
-      else
-        res.status(200).json({
-          message: "No entries found",
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
+
 };
 
 exports.products_create_product = (req, res, next) => {
