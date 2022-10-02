@@ -68,7 +68,7 @@ exports.orders_get_order = (req, res, next) => {
     .exec()
     .then((order) => {
       //if order not found then don't proceed
-      if (!order) return res.status(404).json({ message: "Order not found" });
+      if (!order) return res.status(404).json({ message: "Order is not found" });
       res.status(200).json({
         order: order,
         request: {
